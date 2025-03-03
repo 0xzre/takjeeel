@@ -1,0 +1,6 @@
+@takjeeel.Server_HostAddress = http://localhost:5124
+
+GET {{takjeeel.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
