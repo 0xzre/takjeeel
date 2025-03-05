@@ -2,21 +2,16 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { TakjilFormComponent } from '../components/control/takjil-form/takjil-form.component';
-
-interface Takjil {
-  date: string;
-  foods: string;
-  quantity: number;
-  description: string;
-}
+import { ButtonModule } from 'primeng/button';
+import { Takjil, TakjilRequest } from '../models/takjil.model';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, TakjilFormComponent],
+  imports: [CommonModule, TakjilFormComponent, ButtonModule],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
-export class HomeComponent implements OnInit{
+export class HomeComponent implements OnInit {
   public takjils: Takjil[] = [];
 
   public pageNumber: number = 1;
@@ -26,10 +21,10 @@ export class HomeComponent implements OnInit{
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.getTakjil();
+    this.getTakjils();
   }
 
-  getTakjil() {
+  getTakjils(callback?: () => void) {
     this.http
       .get<{ takjils: Takjil[]; totalPages: number }>(
         `/takjil/?pageNumber=${this.pageNumber}&pageSize=${this.pageSize}`
@@ -37,7 +32,10 @@ export class HomeComponent implements OnInit{
       .subscribe({
         next: (result) => {
           this.takjils = result.takjils;
-          this.totalPages = result.totalPages / this.pageSize;
+          this.totalPages = Math.ceil(result.totalPages / this.pageSize);
+          if (callback) {
+            callback();
+          }
         },
         error: (error) => {
           console.error(error);
@@ -45,25 +43,61 @@ export class HomeComponent implements OnInit{
       });
   }
 
+  getTakjilsSafePage() {
+    this.getTakjils(() => {
+      if (this.pageNumber > this.totalPages) {
+        this.previousPage();
+      }
+    });
+  }
+
+  addTakjil = (takjil: TakjilRequest) => {
+    this.http
+      .post('/takjil', {
+        date: takjil.date,
+        foods: takjil.foods,
+        quantity: takjil.quantity,
+        description: takjil.description,
+      })
+      .subscribe({
+        next: () => {
+          this.getTakjils();
+        },
+        error: (error) => {
+          console.error(error);
+        },
+      });
+  };
+
+  deleteTakjil(takjilId: number) {
+    this.http.delete(`/takjil/?id=${takjilId}`).subscribe({
+      next: () => {
+        this.getTakjilsSafePage();
+      },
+      error: (error) => {
+        console.error(error);
+      },
+    });
+  }
+
   nextPage() {
     if (this.pageNumber < this.totalPages) {
       this.pageNumber++;
-      this.getTakjil();
+      this.getTakjils();
     }
   }
 
   previousPage() {
     if (this.pageNumber > 1) {
       this.pageNumber--;
-      this.getTakjil();
+      this.getTakjils();
     }
   }
 
   loadPage(page: number) {
     if (page > 0) {
       this.pageNumber = page;
-      this.getTakjil();
+      this.getTakjils();
     }
   }
-
 }

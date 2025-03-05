@@ -9,6 +9,7 @@
             <th>Food</th>
             <th>Description</th>
             <th>Jumlah</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -17,6 +18,7 @@
             <td>{{ takjil.foods }}</td>
             <td>{{ takjil.description }}</td>
             <td>{{ takjil.quantity}}</td>
+            <td><p-button (click)="deleteTakjil(takjil.takjilId)" label="Delete" variant="text" [raised]="true" severity="danger" /></td>
         </tr>
     </tbody>
 </table>
@@ -27,4 +29,4 @@
     <button (click)="nextPage()" [disabled]="pageNumber === totalPages">Next</button>
 </div>
 
-<app-takjil-form/>
+<app-takjil-form [submit_takjil]="addTakjil"/>

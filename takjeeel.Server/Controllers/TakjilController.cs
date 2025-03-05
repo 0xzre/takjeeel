@@ -39,6 +39,17 @@ namespace takjeeel.Server.Controllers
             }
         }
 
+        [HttpDelete(Name="DeleteTakjil")]
+        public async Task<bool> DeleteTakjil(int id)
+        {
+            var (Succeeded, Errors) = await _takjilService.DeleteTakjilAsync(id);
+            if (Succeeded) {
+                return true;
+            } else {
+                throw new Exception("Failed to delete takjil : " + string.Join(", ", Errors));
+            }
+        }
+
         public class GetTakjilsResponse
         {
             public IEnumerable<Takjil>? Takjils { get; set; }
