@@ -4,3 +4,7 @@ GET {{takjeeel.Server_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+GET {{takjeeel.Server_HostAddress}}/takjil/
+Accept: application/json
+
+###

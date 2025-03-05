@@ -1,0 +1,14 @@
+<p-datepicker [(ngModel)]="foodDate" dateFormat="dd-mm-yy" />
+<p-iftalabel>
+    <input pInputText id="foodName" [(ngModel)]="foodName" autocomplete="off" />
+    <label for="foodName">Food Name</label>
+</p-iftalabel>
+<p-iftalabel>
+    <textarea id="foodDescription" rows="5" cols="25" pTextarea [(ngModel)]="foodDescription" ></textarea>
+    <label for="foodDescription">Description</label>
+</p-iftalabel>
+<p-iftalabel>
+    <p-inputnumber id="foodQuantity" inputId="integeronly" [(ngModel)]="foodQuantity" />
+    <label for="foodQuantity">Quantity</label>
+</p-iftalabel>
+<p-button label="Save" icon="pi pi-check" iconPos="right" (click)='submit()'/>
