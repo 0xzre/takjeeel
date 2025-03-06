@@ -1,14 +1,18 @@
-<p-datepicker [(ngModel)]="foodDate" dateFormat="dd-mm-yy" />
+<p-datepicker [(ngModel)]="formattedDate" (ngModelChange)="takjil.date=$event" dateFormat="dd-mm-yy" />
 <p-iftalabel>
-    <input pInputText id="foodName" [(ngModel)]="foodName" autocomplete="off" />
+    <input pInputText id="foodName" [(ngModel)]="takjil.foods" autocomplete="off" />
     <label for="foodName">Food Name</label>
 </p-iftalabel>
 <p-iftalabel>
-    <textarea id="foodDescription" rows="5" cols="25" pTextarea [(ngModel)]="foodDescription" ></textarea>
+    <textarea id="foodDescription" rows="5" cols="25" pTextarea [(ngModel)]="takjil.description"></textarea>
     <label for="foodDescription">Description</label>
 </p-iftalabel>
 <p-iftalabel>
-    <p-inputnumber id="foodQuantity" inputId="integeronly" [(ngModel)]="foodQuantity" />
+    <p-inputnumber id="foodQuantity" inputId="integeronly" [(ngModel)]="takjil.quantity"/>
     <label for="foodQuantity">Quantity</label>
 </p-iftalabel>
-<p-button label="Save" icon="pi pi-check" iconPos="right" (click)='onSubmit()'/>
+<p-buttongroup>
+    <p-button label="Save" icon="pi pi-check" iconPos="right" (click)='submitForm()'/>
+    <!-- <p-button label="Delete" icon="pi pi-trash" /> -->
+    <p-button label="Cancel" icon="pi pi-times" (click)='cancelCallback()'/>
+</p-buttongroup>

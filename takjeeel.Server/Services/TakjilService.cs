@@ -47,7 +47,16 @@ public class TakjilService : ITakjilService
 
     public async Task<(bool Succeeded, string[] Errors)> UpdateTakjilAsync(Takjil takjil)
     {
-        _dbContext.Takjils.Update(takjil);
+        var currTakjil = await _dbContext.Takjils.FindAsync(takjil.TakjilId);
+        if (currTakjil == null)
+        {
+            return (false, new string[] { "Takjil not found" });
+        }
+        currTakjil.Foods = takjil.Foods;
+        currTakjil.Date = takjil.Date;
+        currTakjil.Description = takjil.Description;
+        currTakjil.Quantity = takjil.Quantity;
+
         await _dbContext.SaveChangesAsync();
         return (true, Array.Empty<string>());
     }

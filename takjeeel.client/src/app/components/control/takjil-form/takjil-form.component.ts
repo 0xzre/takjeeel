@@ -6,8 +6,13 @@ import { IftaLabelModule } from 'primeng/iftalabel';
 import { TextareaModule } from 'primeng/textarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
+import { ButtonGroupModule } from 'primeng/buttongroup';
 import { HttpClient } from '@angular/common/http';
-import { TakjilRequest } from '../../../models/takjil.model';
+import {
+  TakjilRequest,
+  Takjil,
+} from '../../../models/takjil.model';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-takjil-form',
@@ -19,33 +24,51 @@ import { TakjilRequest } from '../../../models/takjil.model';
     TextareaModule,
     InputNumberModule,
     ButtonModule,
+    ButtonGroupModule,
   ],
+  providers: [DatePipe],
   templateUrl: './takjil-form.component.html',
   styleUrl: './takjil-form.component.scss',
 })
 export class TakjilFormComponent {
-  @Input("submit_takjil") submitTakjil: (takjil: TakjilRequest) => void = () => {};
-  constructor(private http: HttpClient) {}
+  @Input('submit_takjil') submitTakjil: (takjil: TakjilRequest) => void =
+    () => {};
+  @Input('save_callback') saveCallback: () => void = () => {};
+  @Input('cancel_callback') cancelCallback: () => void = () => {};
+  @Input('component_visible') isComponentVisible: boolean = false;
+  constructor(private http: HttpClient, private datePipe: DatePipe) {}
 
-  public foodDate: Date = new Date();
-  public foodName: string = '';
-  public foodDescription: string = '';
-  public foodQuantity: number = 0;
+  @Input('takjil')
+  takjil: Takjil = {
+    takjilId: 0,
+    date: new Date().toISOString().slice(0, 10),
+    foods: '',
+    description: '',
+    quantity: 0,
+  };
 
-  onSubmit(): void {
-    const takjil: TakjilRequest = {
-      date: this.foodDate.toISOString().slice(0, 10),
-      foods: this.foodName,
-      description: this.foodDescription,
-      quantity: this.foodQuantity,
-    };
-    this.submitTakjil(takjil);
+  get formattedDate() {
+    return this.datePipe.transform(this.takjil.date, 'dd-MM-yyyy');
   }
 
-  onReset(): void {
-    this.foodDate = new Date();
-    this.foodName = '';
-    this.foodDescription = '';
-    this.foodQuantity = 0;
+  submitForm(): void {
+    const takjil: TakjilRequest = {
+      takjilId: this.takjil.takjilId,
+      date: this.takjil.date,
+      foods: this.takjil.foods,
+      description: this.takjil.description,
+      quantity: this.takjil.quantity,
+    };
+    this.submitTakjil(takjil);
+    this.resetForm();
+    this.saveCallback();
+  }
+
+  resetForm(): void {
+    this.takjil.takjilId = 0;
+    this.takjil.date = new Date().toISOString().slice(0, 10);
+    this.takjil.foods = '';
+    this.takjil.description = '';
+    this.takjil.quantity = 0;
   }
 }

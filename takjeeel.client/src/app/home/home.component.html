@@ -1,32 +1,83 @@
 <h1 id="tableLabel">takjil maseh</h1>
 
-<p *ngIf="!takjils"><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationangular">https://aka.ms/jspsintegrationangular</a> for more details.</em></p>
+<p *ngIf="!takjils">
+  <em
+    >Loading... Please refresh once the ASP.NET backend has started. See
+    <a href="https://aka.ms/jspsintegrationangular"
+      >https://aka.ms/jspsintegrationangular</a
+    >
+    for more details.</em
+  >
+</p>
 
 <table *ngIf="takjils" class="bg-primary">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Food</th>
-            <th>Description</th>
-            <th>Jumlah</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let takjil of takjils">
-            <td>{{ takjil.date }}</td>
-            <td>{{ takjil.foods }}</td>
-            <td>{{ takjil.description }}</td>
-            <td>{{ takjil.quantity}}</td>
-            <td><p-button (click)="deleteTakjil(takjil.takjilId)" label="Delete" variant="text" [raised]="true" severity="danger" /></td>
-        </tr>
-    </tbody>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Food</th>
+      <th>Description</th>
+      <th>Jumlah</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let takjil of takjils">
+      <td>{{ takjil.date }}</td>
+      <td>{{ takjil.foods }}</td>
+      <td>{{ takjil.description }}</td>
+      <td>{{ takjil.quantity }}</td>
+      <td>
+        <p-button
+          (click)="showEditTakjilForm(takjil)"
+          label="Edit"
+          variant="text"
+          [raised]="true"
+          severity="info"
+        />
+      </td>
+      <td>
+        <p-button
+          (click)="deleteTakjil(takjil.takjilId)"
+          label="Delete"
+          variant="text"
+          [raised]="true"
+          severity="danger"
+        />
+      </td>
+    </tr>
+  </tbody>
 </table>
 
 <div class="pagination">
-    <button (click)="previousPage()" [disabled]="pageNumber === 1">Previous</button>
-    <span>Page {{ pageNumber }} of {{totalPages}}</span>
-    <button (click)="nextPage()" [disabled]="pageNumber === totalPages">Next</button>
+  <button (click)="previousPage()" [disabled]="pageNumber === 1">
+    Previous
+  </button>
+  <span>Page {{ pageNumber }} of {{ totalPages }}</span>
+  <button (click)="nextPage()" [disabled]="pageNumber === totalPages">
+    Next
+  </button>
 </div>
 
-<app-takjil-form [submit_takjil]="addTakjil"/>
+<p-button
+  label="Add Takjil"
+  icon="pi pi-plus"
+  iconPos="bottom"
+  (click)="showNewTakjilForm()"
+  [style.display]="!isAddingTakjil ? 'block' : 'none'"
+/>
+<app-takjil-form
+  [style.display]="isAddingTakjil ? 'block' : 'none'"
+  [cancel_callback]="hideNewTakjilForm"
+  [save_callback]="hideNewTakjilForm"
+  [submit_takjil]="addTakjil"
+/>
+
+<div *ngIf="isEditingTakjil">
+  <div>Edit Takjil</div>
+  <app-takjil-form
+    [save_callback]="hideEditTakjilForm"
+    [cancel_callback]="hideEditTakjilForm"
+    [submit_takjil]="editTakjil"
+    [takjil]="currentEditedTakjil"
+  />
+</div>

@@ -7,6 +7,7 @@ export interface Takjil {
 }
 
 export interface TakjilRequest {
+  takjilId?: number;
   date: string;
   foods: string;
   quantity: number;
@@ -19,4 +20,12 @@ export interface TakjilResponse {
   foods: string;
   quantity: number;
   description: string;
+}
+
+export interface TakjilForm {
+  takjilId: number; 
+  foodDate: Date;
+  foodName: string;
+  foodDescription: string;
+  foodQuantity: number;
 }

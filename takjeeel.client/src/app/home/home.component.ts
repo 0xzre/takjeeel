@@ -18,6 +18,17 @@ export class HomeComponent implements OnInit {
   public pageSize: number = 10;
   public totalPages: number = 0;
 
+  public isAddingTakjil: boolean = false;
+
+  public isEditingTakjil: boolean = false;
+  public currentEditedTakjil: Takjil = {
+    takjilId: 0,
+    date: new Date().toISOString().slice(0, 10),
+    foods: '',
+    description: '',
+    quantity: 0,
+  };
+
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
@@ -69,6 +80,25 @@ export class HomeComponent implements OnInit {
       });
   };
 
+  editTakjil = (takjil: TakjilRequest) => {
+    this.http
+      .put('/takjil', {
+        takjilId: takjil.takjilId,
+        date: takjil.date,
+        foods: takjil.foods,
+        quantity: takjil.quantity,
+        description: takjil.description,
+      })
+      .subscribe({
+        next: () => {
+          this.getTakjils();
+        },
+        error: (error) => {
+          console.error(error);
+        },
+      });
+  }
+
   deleteTakjil(takjilId: number) {
     this.http.delete(`/takjil/?id=${takjilId}`).subscribe({
       next: () => {
@@ -100,4 +130,21 @@ export class HomeComponent implements OnInit {
       this.getTakjils();
     }
   }
+
+  showNewTakjilForm() {
+    this.isAddingTakjil = true;
+  }
+
+  hideNewTakjilForm = () => {
+    this.isAddingTakjil = false;
+  };
+
+  showEditTakjilForm = (takjil: Takjil) => {
+    this.isEditingTakjil = true;
+    this.currentEditedTakjil = JSON.parse(JSON.stringify(takjil));
+  };
+
+  hideEditTakjilForm = () => {
+    this.isEditingTakjil = false;
+  };
 }
