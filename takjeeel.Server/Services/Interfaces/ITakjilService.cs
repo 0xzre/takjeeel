@@ -13,7 +13,7 @@ namespace takjeeel.Server.Services
         Task<Takjil?> AddTakjilAsync(Takjil takjil);
         Task<(bool Succeeded, string[] Errors)> DeleteTakjilAsync(int takjilId);
         Task<Takjil?> GetTakjilAsync(int takjilId);
-        Task<(List<Takjil>, int)> GetTakjilsAsync(int page, int pageSize);
+        Task<(List<Takjil>, int)> GetTakjilsAsync(int page, int pageSize, string? keyword = null);
         Task<(bool Succeeded, string[] Errors)> UpdateTakjilAsync(Takjil takjil);
     }
 }

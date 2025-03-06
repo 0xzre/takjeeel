@@ -10,6 +10,12 @@
   >
 </p>
 
+<app-search-bar
+  [search]="searchTakjils"
+  [placeholder]="'Search takjil...'"
+  [query]="searchQuery"
+></app-search-bar>
+
 <table *ngIf="takjils" class="bg-primary">
   <thead>
     <tr>

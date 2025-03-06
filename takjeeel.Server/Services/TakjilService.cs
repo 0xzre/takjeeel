@@ -40,9 +40,12 @@ public class TakjilService : ITakjilService
         return await _dbContext.Takjils.FindAsync(takjilId);
     }
 
-    public async Task<(List<Takjil>, int)> GetTakjilsAsync(int page, int pageSize)
+    public async Task<(List<Takjil>, int)> GetTakjilsAsync(int page, int pageSize, string? keyword = null)
     {
-        return (await _dbContext.Takjils.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(), await _dbContext.Takjils.CountAsync());
+        if (string.IsNullOrEmpty(keyword))
+            return (await _dbContext.Takjils.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(), await _dbContext.Takjils.CountAsync());
+        var takjils = await _dbContext.Takjils.Where(t => EF.Functions.Like(t.Foods, "%" + keyword + "%")).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        return (takjils, await _dbContext.Takjils.Where(t => EF.Functions.Like(t.Foods, "%" + keyword + "%")).CountAsync());
     }
 
     public async Task<(bool Succeeded, string[] Errors)> UpdateTakjilAsync(Takjil takjil)

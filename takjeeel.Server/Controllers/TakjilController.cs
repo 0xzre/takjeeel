@@ -18,9 +18,9 @@ namespace takjeeel.Server.Controllers
         }
 
         [HttpGet(Name = "GetTakjil")]
-        public async Task<GetTakjilsResponse> GetAllTakjil(int pageNumber = -1, int pageSize = -1)
+        public async Task<GetTakjilsResponse> GetAllTakjil(int pageNumber = 1, int pageSize = 1, string? query = null)
         {
-            var (takjils, totalPages) = await _takjilService.GetTakjilsAsync(pageNumber, pageSize);
+            var (takjils, totalPages) = await _takjilService.GetTakjilsAsync(pageNumber, pageSize, query);
             return new GetTakjilsResponse
             {
             Takjils = takjils,

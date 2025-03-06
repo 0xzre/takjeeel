@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TakjilBoardComponent } from './takjil-board.component';
+import { SearchBarComponent } from './search-bar.component';
 
-describe('TakjilBoardComponent', () => {
-  let component: TakjilBoardComponent;
-  let fixture: ComponentFixture<TakjilBoardComponent>;
+describe('SearchBarComponent', () => {
+  let component: SearchBarComponent;
+  let fixture: ComponentFixture<SearchBarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TakjilBoardComponent]
+      imports: [SearchBarComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TakjilBoardComponent);
+    fixture = TestBed.createComponent(SearchBarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

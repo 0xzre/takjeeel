@@ -4,24 +4,32 @@ import { Component, OnInit } from '@angular/core';
 import { TakjilFormComponent } from '../components/control/takjil-form/takjil-form.component';
 import { ButtonModule } from 'primeng/button';
 import { Takjil, TakjilRequest } from '../models/takjil.model';
+import { SearchBarComponent } from '../components/control/search-bar/search-bar.component';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, TakjilFormComponent, ButtonModule],
+  imports: [
+    CommonModule,
+    TakjilFormComponent,
+    ButtonModule,
+    SearchBarComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
-  public takjils: Takjil[] = [];
+  takjils: Takjil[] = [];
 
-  public pageNumber: number = 1;
-  public pageSize: number = 10;
-  public totalPages: number = 0;
+  pageNumber: number = 1;
+  pageSize: number = 10;
+  totalPages: number = 0;
 
-  public isAddingTakjil: boolean = false;
+  searchQuery: string = '';
 
-  public isEditingTakjil: boolean = false;
-  public currentEditedTakjil: Takjil = {
+  isAddingTakjil: boolean = false;
+
+  isEditingTakjil: boolean = false;
+  currentEditedTakjil: Takjil = {
     takjilId: 0,
     date: new Date().toISOString().slice(0, 10),
     foods: '',
@@ -35,15 +43,18 @@ export class HomeComponent implements OnInit {
     this.getTakjils();
   }
 
-  getTakjils(callback?: () => void) {
+  getTakjils = (callback?: () => void, query: string = '') => {
     this.http
       .get<{ takjils: Takjil[]; totalPages: number }>(
-        `/takjil/?pageNumber=${this.pageNumber}&pageSize=${this.pageSize}`
+        `/takjil/?pageNumber=${this.pageNumber}&pageSize=${this.pageSize}&query=${query}`
       )
       .subscribe({
         next: (result) => {
           this.takjils = result.takjils;
-          this.totalPages = Math.ceil(result.totalPages / this.pageSize);
+          this.totalPages = Math.max(
+            Math.ceil(result.totalPages / this.pageSize),
+            1
+          );
           if (callback) {
             callback();
           }
@@ -52,14 +63,23 @@ export class HomeComponent implements OnInit {
           console.error(error);
         },
       });
-  }
+  };
+
+  searchTakjils = (query: string) => {
+    this.getTakjils(() => {
+      this.pageNumber = 1;
+      while (this.pageNumber > this.totalPages) {
+        this.previousPage();
+      }
+    }, query);
+  };
 
   getTakjilsSafePage() {
     this.getTakjils(() => {
       if (this.pageNumber > this.totalPages) {
         this.previousPage();
       }
-    });
+    }, this.searchQuery);
   }
 
   addTakjil = (takjil: TakjilRequest) => {
@@ -91,13 +111,15 @@ export class HomeComponent implements OnInit {
       })
       .subscribe({
         next: () => {
-          this.getTakjils();
+          this.getTakjils(() => {
+            this.isEditingTakjil = false;
+          }, this.searchQuery);
         },
         error: (error) => {
           console.error(error);
         },
       });
-  }
+  };
 
   deleteTakjil(takjilId: number) {
     this.http.delete(`/takjil/?id=${takjilId}`).subscribe({
@@ -113,21 +135,21 @@ export class HomeComponent implements OnInit {
   nextPage() {
     if (this.pageNumber < this.totalPages) {
       this.pageNumber++;
-      this.getTakjils();
+      this.getTakjils(() => {}, this.searchQuery);
     }
   }
 
   previousPage() {
     if (this.pageNumber > 1) {
       this.pageNumber--;
-      this.getTakjils();
+      this.getTakjils(() => {}, this.searchQuery);
     }
   }
 
   loadPage(page: number) {
     if (page > 0) {
       this.pageNumber = page;
-      this.getTakjils();
+      this.getTakjils(() => {}, this.searchQuery);
     }
   }
 
